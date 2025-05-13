@@ -4,10 +4,10 @@ use App\Http\Controllers\ExpenseExportController;
 use App\Http\Controllers\ProfileController;
 use App\Livewire\AdminDashboardComponent;
 use App\Livewire\AllExpensesComponent;
+use App\Livewire\AllNotifications;
 use App\Livewire\CreateExpenseRequest;
 use App\Livewire\FinanceApprovalComponent;
 use App\Livewire\HrApprovalComponent;
-use App\Livewire\NotificationsController;
 use App\Livewire\ReportsComponent;
 use App\Livewire\UserExpenseList;
 use App\Livewire\UserManagementComponent;
@@ -32,8 +32,7 @@ Route::middleware('auth')->group(function () {
     Route::get('/expenses/my', UserExpenseList::class)->name('expenses.my');
 
     // مسیرهای نوتیفیکیشن
-    Route::get('/notifications', [NotificationsController::class, 'index'])->name('notifications.index');
-    Route::post('/notifications/mark-all-as-read', [NotificationsController::class, 'markAllAsRead'])->name('notifications.markAllAsRead');
+    Route::get('/notifications', AllNotifications::class)->name('notifications.index');
 
     // مسیرهای منابع انسانی
     Route::middleware(['role:hr'])->prefix('hr')->group(function () {

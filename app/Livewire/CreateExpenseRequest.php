@@ -84,7 +84,6 @@ class CreateExpenseRequest extends Component
             'status' => 'pending',
         ]);
 
-        // ارسال نوتیفیکیشن
         auth()->user()->notify(new ExpenseRequestStatusChanged($expenseRequest, 'pending'));
 
         $this->reset(['amount', 'description', 'invoice']);

@@ -6,36 +6,46 @@ use Livewire\Component;
 
 class NotificationsDropdown extends Component
 {
-    public $unreadCount;
+    public $unreadCount = 0; // تعداد نوتیفیکیشن‌های خوانده نشده
+    public $notifications = []; // لیست نوتیفیکیشن‌ها
 
-    protected $listeners = ['refreshNotifications' => 'refreshCount'];
+    protected $listeners = ['refreshNotifications' => 'refreshCount']; // گوش دادن به رویدادها
 
-    public function mount()
+    public function mount(): void
     {
-        $this->refreshCount();
+        $this->loadNotifications();
     }
 
-    public function refreshCount()
+    // بارگذاری نوتیفیکیشن‌ها از پایگاه داده
+    public function loadNotifications()
     {
-        $this->unreadCount = auth()->user()->unreadNotifications->count();
+        if (auth()->check()) {
+            $this->unreadCount = auth()->user()->unreadNotifications->count();
+            $this->notifications = auth()->user()->notifications()->latest()->take(5)->get();
+        }
     }
 
-    public function markAsRead($notificationId)
+    public function refreshCount(): void
+    {
+        $this->loadNotifications();
+    }
+
+    public function markAsRead($notificationId): void
     {
         auth()->user()->notifications->where('id', $notificationId)->first()?->markAsRead();
-        $this->refreshCount();
+        $this->loadNotifications();
     }
 
-    public function markAllAsRead()
+    public function markAllAsRead(): void
     {
         auth()->user()->unreadNotifications->markAsRead();
-        $this->refreshCount();
+        $this->loadNotifications();
     }
 
     public function render()
     {
         return view('livewire.notifications-dropdown', [
-            'notifications' => auth()->user()->notifications()->latest()->take(5)->get()
+            'notifications' => $this->notifications
         ]);
     }
 }
